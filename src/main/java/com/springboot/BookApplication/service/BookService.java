@@ -2,11 +2,9 @@ package com.springboot.BookApplication.service;
 
 import com.springboot.BookApplication.entity.Book;
 import com.springboot.BookApplication.repository.BookRepository;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -38,5 +36,20 @@ public class BookService {
         }
 
         bookRepository.deleteById(id);
+    }
+
+    //update book
+    public Book updateBook(Long id, Book updatedBook){
+        Book existingBook = bookRepository.findById(id)
+                .orElseThrow(()-> new RuntimeException("Book not found with id: " + id));
+
+        existingBook.setTitle(updatedBook.getTitle());
+        existingBook.setAuthor(updatedBook.getAuthor());
+        existingBook.setIsbn(updatedBook.getIsbn());
+        existingBook.setGenre(updatedBook.getGenre());
+        existingBook.setPublisher(updatedBook.getPublisher());
+        existingBook.setPublicationYear(updatedBook.getPublicationYear());
+
+        return bookRepository.save(existingBook);
     }
 }
