@@ -5,6 +5,8 @@ import com.springboot.BookApplication.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -29,4 +31,12 @@ public class BookService {
         return bookRepository.findBooksByTitle(title);
     }
 
+    //delete a book by id
+    public void deleteBookById(Long id) {
+        if(!bookRepository.existsById(id)){
+            throw new RuntimeException("Book not found with id:" + id);
+        }
+
+        bookRepository.deleteById(id);
+    }
 }
