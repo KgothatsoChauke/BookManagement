@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class BookService {
@@ -20,6 +22,11 @@ public class BookService {
     public Book getBookById(Long id) {
         return bookRepository.findById(id)
                 .orElseThrow(()-> new RuntimeException("Book not found"));
+    }
+
+    //search books by title
+    public List<Book> getBooksByTitle(String title){
+        return bookRepository.findBooksByTitle(title);
     }
 
 }

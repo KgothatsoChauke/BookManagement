@@ -30,5 +30,12 @@ public class BookController {
         return ResponseEntity.ok(book);
     }
 
+    //search a book by title
+    @GetMapping("/search")
+    public ResponseEntity<List<Book>> getBooksByTitle(@RequestParam String title){
+        List<Book> books = bookService.getBooksByTitle(title);
+        return ResponseEntity.ok(books);
+    }
+
 
 }
