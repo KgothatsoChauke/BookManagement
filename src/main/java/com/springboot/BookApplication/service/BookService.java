@@ -15,4 +15,11 @@ public class BookService {
     public Book addBook(Book book) {
         return bookRepository.save(book);
     }
+
+    //get book by id
+    public Book getBookById(Long id) {
+        return bookRepository.findById(id)
+                .orElseThrow(()-> new RuntimeException("Book not found"));
+    }
+
 }

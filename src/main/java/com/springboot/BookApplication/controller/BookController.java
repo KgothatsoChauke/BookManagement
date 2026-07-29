@@ -5,10 +5,9 @@ import com.springboot.BookApplication.service.BookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,6 +21,13 @@ public class BookController {
     public ResponseEntity<Book> addBook(@RequestBody Book book){
         Book savedBook = bookService.addBook(book);
         return ResponseEntity.status(HttpStatus.CREATED).body(book);
+    }
+
+    //read a book by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Book> getBookById(@PathVariable Long id){
+        Book book = bookService.getBookById(id);
+        return ResponseEntity.ok(book);
     }
 
 
