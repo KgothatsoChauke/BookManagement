@@ -1,12 +1,13 @@
 package com.springboot.BookApplication.service;
 
 import com.springboot.BookApplication.entity.Book;
+import com.springboot.BookApplication.exception.BookNotFoundException;
 import com.springboot.BookApplication.repository.BookRepository;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,18 +22,24 @@ public class BookService {
     //get book by id
     public Book getBookById(Long id) {
         return bookRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("Book not found"));
+                .orElseThrow(()-> new BookNotFoundException("Book with id " + id +" not found"));
     }
 
     //search books by title
     public List<Book> getBooksByTitle(String title){
-        return bookRepository.findBooksByTitle(title);
+        List<Book> books = bookRepository.findBooksByTitle(title);
+
+        if(books.isEmpty()){
+            throw new BookNotFoundException("Books with title '"+ title + "' not found");
+         }
+
+        return books;
     }
 
     //delete a book by id
     public void deleteBookById(Long id) {
         if(!bookRepository.existsById(id)){
-            throw new RuntimeException("Book not found with id:" + id);
+            throw new BookNotFoundException("Book with id '" + id + "' does not exist");
         }
 
         bookRepository.deleteById(id);
@@ -41,7 +48,7 @@ public class BookService {
     //update book
     public Book updateBook(Long id, Book updatedBook){
         Book existingBook = bookRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("Book not found with id: " + id));
+                .orElseThrow(()-> new BookNotFoundException("Book with id '" + id + "' not found"));
 
         existingBook.setTitle(updatedBook.getTitle());
         existingBook.setAuthor(updatedBook.getAuthor());
