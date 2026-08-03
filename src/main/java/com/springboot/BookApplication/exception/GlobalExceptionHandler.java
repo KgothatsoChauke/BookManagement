@@ -15,7 +15,7 @@ public class GlobalExceptionHandler {
         ErrorResponse error = new ErrorResponse();
 
         error.setTimeStamp(LocalDateTime.now());
-        error.setError("Not Found");
+        error.setError(HttpStatus.NOT_FOUND.getReasonPhrase());
         error.setStatusCode(HttpStatus.NOT_FOUND.value());
         error.setMessage(exception.getMessage());
 
