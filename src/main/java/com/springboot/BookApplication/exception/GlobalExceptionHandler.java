@@ -1,5 +1,6 @@
 package com.springboot.BookApplication.exception;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -22,7 +23,7 @@ public class GlobalExceptionHandler {
         error.setStatusCode(HttpStatus.NOT_FOUND.value());
         error.setMessage(exception.getMessage());
 
-        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -45,9 +46,22 @@ public class GlobalExceptionHandler {
 
         error.setValidationErrors(validationMessages);
 
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
 
     }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(DataIntegrityViolationException exception){
+        ErrorResponse error = new ErrorResponse();
+
+        error.setTimeStamp(LocalDateTime.now());
+        error.setError(HttpStatus.CONFLICT.getReasonPhrase());
+        error.setStatusCode(HttpStatus.CONFLICT.value());
+        error.setMessage("A book with the same ISBN already exists.");
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
 }
 
 
