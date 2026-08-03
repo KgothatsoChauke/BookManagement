@@ -18,22 +18,22 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotBlank
+    @NotBlank(message = "cannot be blank")
     @Column(nullable = false)
     private String title;
 
-    @NotBlank
+    @NotBlank(message = "cannot be blank")
     @Column(nullable = false)
     private String author;
 
-    @NotBlank
+    @NotBlank(message = "cannot be blank")
     @Pattern(regexp = "^(\\d{10}|\\d{13})$",
-            message = "ISBN must contain 10 or 13 digits")
+            message = "must contain 10 or 13 digits")
 
     @Column(unique = true)
     private String isbn;
 
-    @NotBlank
+    @NotBlank(message = "cannot be blank")
     private String publisher;
 
     @Min(1900)
