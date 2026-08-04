@@ -1,6 +1,7 @@
 package com.springboot.BookApplication.controller;
 
-import com.springboot.BookApplication.entity.Book;
+import com.springboot.BookApplication.dto.BookRequestDto;
+import com.springboot.BookApplication.dto.BookResponseDto;
 import com.springboot.BookApplication.service.BookService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,22 +20,23 @@ public class BookController {
 
     //create a book
     @PostMapping
-    public ResponseEntity<Book> addBook(@Valid @RequestBody Book book){
-        Book savedBook = bookService.addBook(book);
-        return ResponseEntity.status(HttpStatus.CREATED).body(book);
+    public ResponseEntity<BookResponseDto> addBook(@Valid @RequestBody BookRequestDto requestDto){
+        BookResponseDto bookResponseDto = bookService.addBook(requestDto);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(bookResponseDto);
     }
 
     //read a book by ID
     @GetMapping("/{id}")
-    public ResponseEntity<Book> getBookById(@PathVariable Long id){
-        Book book = bookService.getBookById(id);
+    public ResponseEntity<BookResponseDto> getBookById(@PathVariable Long id){
+        BookResponseDto book = bookService.getBookById(id);
         return ResponseEntity.ok(book);
     }
 
     //search a book by title
     @GetMapping("/search")
-    public ResponseEntity<List<Book>> getBooksByTitle(@RequestParam String title){
-        List<Book> books = bookService.getBooksByTitle(title);
+    public ResponseEntity<List<BookResponseDto>> getBooksByTitle(@RequestParam String title){
+        List<BookResponseDto> books = bookService.getBooksByTitle(title);
         return ResponseEntity.ok(books);
     }
 
@@ -47,7 +48,7 @@ public class BookController {
 
     //update book
     @PutMapping("/{id}")
-    public ResponseEntity<Book> updateBook(@PathVariable Long id , @RequestBody Book updatedBook){
+    public ResponseEntity<BookResponseDto> updateBook(@PathVariable Long id , @RequestBody BookRequestDto updatedBook){
         return ResponseEntity.ok(bookService.updateBook(id, updatedBook));
     }
 
