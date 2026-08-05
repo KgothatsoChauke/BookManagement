@@ -3,44 +3,23 @@ package com.springboot.BookApplication.mapper;
 import com.springboot.BookApplication.dto.BookRequestDto;
 import com.springboot.BookApplication.dto.BookResponseDto;
 import com.springboot.BookApplication.entity.Book;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 
 import java.util.List;
 
-@Component
-public class BookMapper {
+@Mapper(componentModel = "spring")
+public interface BookMapper {
 
-    public BookResponseDto toResponseDto(Book book){
-        BookResponseDto responseDto = new BookResponseDto();
+    BookResponseDto toResponseDto(Book book);
 
-        responseDto.setId(book.getId());
-        responseDto.setTitle(book.getTitle());
-        responseDto.setAuthor(book.getAuthor());
-        responseDto.setIsbn(book.getIsbn());
-        responseDto.setPublisher(book.getPublisher());
-        responseDto.setPublicationYear(book.getPublicationYear());
+    @Mapping(target = "id", ignore = true)
+    Book toEntity(BookRequestDto requestDto);
 
-        return responseDto;
-    }
+    List<BookResponseDto> toResponseDtoList(List<Book> books);
 
-    public Book toEntity(BookRequestDto requestDto){
-        Book entity = new Book();
-
-        entity.setTitle(requestDto.getTitle());
-        entity.setAuthor(requestDto.getAuthor());
-        entity.setIsbn(requestDto.getIsbn());
-        entity.setPublisher(requestDto.getPublisher());
-        entity.setPublicationYear(requestDto.getPublicationYear());
-        entity.setGenre(requestDto.getGenre());
-
-        return  entity;
-    }
-
-    public List<BookResponseDto> toResponseDtoList(List<Book> books){
-
-        return books.stream()
-                .map(book -> toResponseDto(book))
-                .toList();
-    }
+    @Mapping(target = "id", ignore = true)
+    void updateEntityFromDto(BookRequestDto dto,@MappingTarget Book book);
 }

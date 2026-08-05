@@ -64,14 +64,9 @@ public class BookService {
         Book existingBook = bookRepository.findById(id)
                 .orElseThrow(()-> new BookNotFoundException("Book with id '" + id + "' not found"));
 
-        existingBook.setTitle(updatedBook.getTitle());
-        existingBook.setAuthor(updatedBook.getAuthor());
-        existingBook.setIsbn(updatedBook.getIsbn());
-        existingBook.setGenre(updatedBook.getGenre());
-        existingBook.setPublisher(updatedBook.getPublisher());
-        existingBook.setPublicationYear(updatedBook.getPublicationYear());
+        bookMapper.updateEntityFromDto(updatedBook, existingBook);
 
-        Book savedBook =  bookRepository.save(existingBook);
+        Book savedBook = bookRepository.save(existingBook);
 
         return bookMapper.toResponseDto(savedBook);
     }
