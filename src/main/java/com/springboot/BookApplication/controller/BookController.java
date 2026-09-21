@@ -26,6 +26,49 @@ public class BookController {
     private final BookService bookService;
 
     //create a book
+    @Operation (
+            summary = "Add a new book",
+            description = "Creates and adds a new book to the library"
+    )
+
+    @ApiResponses(
+            {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "Book created successfully",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = BookResponseDto.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Validation failed",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorResponse.class)
+                            )
+
+                    ),
+                    @ApiResponse(
+                            responseCode = "409",
+                            description = "A book with the same ISBN already exists",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorResponse.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "An unexpected error occurred.",
+                            content = @Content(
+                                    mediaType = "apllication/json",
+                                    schema = @Schema(implementation = ErrorResponse.class)
+                            )
+                    ),
+
+            }
+    )
     @PostMapping
     public ResponseEntity<BookResponseDto> addBook(@Valid @RequestBody BookRequestDto requestDto){
         BookResponseDto bookResponseDto = bookService.addBook(requestDto);
@@ -100,6 +143,7 @@ public class BookController {
     }
 
     //update book
+
     @PutMapping("/{id}")
     public ResponseEntity<BookResponseDto> updateBook(@PathVariable Long id , @RequestBody BookRequestDto updatedBook){
         return ResponseEntity.ok(bookService.updateBook(id, updatedBook));
