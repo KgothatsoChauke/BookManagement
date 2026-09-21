@@ -137,9 +137,39 @@ public class BookController {
     }
 
     //delete a book by id
+    @Operation(
+            summary = "Delete a book by id",
+            description = "Delete a book from the library using its unique ID"
+    )
+
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "Book successfully deleted"
+
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Book not found",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "An unexpected error occurred",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
+    })
     @DeleteMapping("/{id}")
-    public void deleteBookById(@PathVariable Long id){
+    public ResponseEntity<Void> deleteBookById(@PathVariable Long id){
         bookService.deleteBookById(id);
+
+        return ResponseEntity.noContent().build();
     }
 
     //update book
