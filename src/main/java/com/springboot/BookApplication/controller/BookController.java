@@ -144,8 +144,55 @@ public class BookController {
 
     //update book
 
+    @Operation(
+            summary = "Updates a book",
+            description = "Update an existing book using its unique ID"
+    )
+
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Book updated successfully",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = BookResponseDto.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Validation failed",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Book not found",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "An unexpected error occurred",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "A book with the same ISBN already exists",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
+    })
     @PutMapping("/{id}")
-    public ResponseEntity<BookResponseDto> updateBook(@PathVariable Long id , @RequestBody BookRequestDto updatedBook){
+    public ResponseEntity<BookResponseDto> updateBook(@PathVariable Long id,@Valid @RequestBody BookRequestDto updatedBook){
         return ResponseEntity.ok(bookService.updateBook(id, updatedBook));
     }
 
