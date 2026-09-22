@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
@@ -18,6 +17,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.never;
@@ -172,5 +172,48 @@ public class BookServiceTest {
 
         verify(bookRepository).existsById(id);
         verify(bookRepository, never()).deleteById(id);
+    }
+
+    @Test
+    void updateBook_shouldReturnUpdatedBookResponseDto(){
+        //Arrange
+        Long id  = 1L;
+        BookRequestDto updatedBook = new BookRequestDto();
+        BookResponseDto responseDto = new BookResponseDto();
+        Book bookToUpdate = new Book();
+        Book savedBook = new Book();
+
+        when(bookRepository.findById(id)).thenReturn(Optional.of(bookToUpdate));
+        when(bookRepository.save(bookToUpdate)).thenReturn(savedBook);
+        when(bookMapper.toResponseDto(savedBook)).thenReturn(responseDto);
+
+        //Act
+        BookResponseDto results = bookService.updateBook(id,updatedBook);
+
+        //Assert
+        assertThat(results).isSameAs(responseDto);
+
+        verify(bookRepository).findById(id);
+        verify(bookRepository).save(bookToUpdate);
+        verify(bookMapper).updateEntityFromDto(updatedBook, bookToUpdate);
+        verify(bookMapper).toResponseDto(savedBook);
+    }
+
+    @Test
+    void updateBook_ShouldThrowExceptionWhenBookDoesNotExist(){
+
+        //Arrange
+        Long id = 999L;
+        BookRequestDto updatedBook = new BookRequestDto();
+
+        when(bookRepository.findById(id)).thenReturn(Optional.empty());
+
+        //Act and Assert
+        assertThatThrownBy(()-> bookService.updateBook(id,updatedBook))
+                .isInstanceOf(BookNotFoundException.class)
+                .hasMessage("Book with id '999' not found");
+
+        verify(bookRepository).findById(id);
+        verify(bookMapper, never()).updateEntityFromDto(any(), any());
     }
 }
