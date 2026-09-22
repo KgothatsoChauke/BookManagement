@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
@@ -19,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.never;
 
 @ExtendWith(MockitoExtension.class)
 public class BookServiceTest {
@@ -139,6 +140,40 @@ public class BookServiceTest {
 
         verify(bookRepository).findBooksByTitle(title);
     }
+
+    @Test
+    void deleteBookById_shouldDeleteBookWhenBookExists(){
+
+        //Arrange
+        Long id = 1L;
+
+        when(bookRepository.existsById(id)).thenReturn(true);
+
+        //Act
+        bookService.deleteBookById(id);
+
+        verify(bookRepository).existsById(id);
+        verify(bookRepository).deleteById(id);
+
+    }
+
+    @Test
+    void deleteBookById_shouldThrowExceptionWhenBookDoesNotExist(){
+
+        //Arrange
+        Long id = 999L;
+
+        when(bookRepository.existsById(id)).thenReturn(false);
+
+        //Act and assert
+        assertThatThrownBy(()-> bookService.deleteBookById(id))
+                .isInstanceOf(BookNotFoundException.class)
+                .hasMessage("Book with id '999' does not exist");
+
+        verify(bookRepository).existsById(id);
+        verify(bookRepository, never()).deleteById(id);
+    }
+
 
 
 }
