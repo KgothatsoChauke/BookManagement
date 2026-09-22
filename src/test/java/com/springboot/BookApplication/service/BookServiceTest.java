@@ -173,7 +173,4 @@ public class BookServiceTest {
         verify(bookRepository).existsById(id);
         verify(bookRepository, never()).deleteById(id);
     }
-
-
-
 }

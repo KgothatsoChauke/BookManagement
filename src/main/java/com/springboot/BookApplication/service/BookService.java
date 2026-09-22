@@ -61,12 +61,12 @@ public class BookService {
 
     //update book
     public BookResponseDto updateBook(Long id, BookRequestDto updatedBook){
-        Book existingBook = bookRepository.findById(id)
+        Book bookToUpdate = bookRepository.findById(id)
                 .orElseThrow(()-> new BookNotFoundException("Book with id '" + id + "' not found"));
 
-        bookMapper.updateEntityFromDto(updatedBook, existingBook);
+        bookMapper.updateEntityFromDto(updatedBook, bookToUpdate);
 
-        Book savedBook = bookRepository.save(existingBook);
+        Book savedBook = bookRepository.save(bookToUpdate);
 
         return bookMapper.toResponseDto(savedBook);
     }
