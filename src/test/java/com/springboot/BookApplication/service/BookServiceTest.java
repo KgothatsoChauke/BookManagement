@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -82,8 +83,6 @@ public class BookServiceTest {
 
         //Arrange
         Long id = 999L;
-        Book book = new Book();
-        BookResponseDto responseDto = new BookResponseDto();
 
         when(bookRepository.findById(id)).thenReturn(Optional.empty());
 
@@ -94,5 +93,52 @@ public class BookServiceTest {
 
         verify(bookRepository).findById(id);
     }
+
+    @Test
+    void getBooksByTitle_shouldReturnBookResponseDtoList(){
+
+        //Arrange
+        String title = "The Pragmatic Programmer";
+
+        Book book1 = new Book();
+        Book book2 = new Book();
+
+        List<Book> books = List.of(book1, book2);
+
+        BookResponseDto responseDto1 = new BookResponseDto();
+        BookResponseDto responseDto2 = new BookResponseDto();
+
+        List<BookResponseDto> bookResponseDtoList= List.of(responseDto1, responseDto2);
+
+        when(bookRepository.findBooksByTitle(title)).thenReturn(books);
+        when(bookMapper.toResponseDtoList(books)).thenReturn(bookResponseDtoList);
+
+        //Act
+        List<BookResponseDto> results = bookService.getBooksByTitle(title);
+
+        //Assert
+        assertThat(results).isSameAs(bookResponseDtoList);
+
+        verify(bookRepository).findBooksByTitle(title);
+        verify(bookMapper).toResponseDtoList(books);
+    }
+
+    @Test
+    void getBooksByTittle_shouldThrowExceptionWhenBooksNotFound(){
+
+        //Arrange
+        String title = "Atomic Habits";
+
+        when(bookRepository.findBooksByTitle(title)).thenReturn(List.of());
+
+
+        //Act and Assert
+        assertThatThrownBy(()-> bookService.getBooksByTitle(title))
+                .isInstanceOf(BookNotFoundException.class)
+                .hasMessage("Books with title 'Atomic Habits' not found");
+
+        verify(bookRepository).findBooksByTitle(title);
+    }
+
 
 }
